@@ -9,3 +9,6 @@ User: Este es el usuario del sitio web de farmacia. El usuario puede ser un empl
 React App: Esta es la aplicación React que implementa la interfaz de usuario del sitio web de farmacia.
 API Gateway: Este es un servicio que actúa como un intermediario entre la aplicación React y la API .NET.
 .NET API: Esta es la API .NET que proporciona datos y servicios a la aplicación React.
+
+
+Video: https://www.youtube.com/watch?v=9QcH0dv5fXY

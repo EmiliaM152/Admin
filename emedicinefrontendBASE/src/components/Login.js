@@ -1,56 +1,55 @@
 import React, { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
-import {baseUrl} from './constants';
+import { Link, useNavigate } from "react-router-dom";
+import { baseUrl } from './constants';
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    debugger;
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     let error = '';
-    if(email === '')
-    error = error + 'Email ,';
+    if (email === '')
+      error = error + 'Email ,';
 
-    if(password === '')
-    error = error + 'Password ';
-    
-    if(error.length > 0)
-    {
+    if (password === '')
+      error = error + 'Password ';
+
+    if (error.length > 0) {
       error = error + ' can not be blank';
       alert(error);
       return;
     }
 
-    e.preventDefault();
     const data = {
       Email: email,
       Password: password,
     };
     const url = `${baseUrl}/api/Users/login`;
-    axios
-      .post(url, data)
-      .then((result) => {
-        const dt = result.data;
-        if (dt.statusCode === 200) {
-          if (email === "admin" && password === "admin") {
-            localStorage.setItem("username", email);
-            window.location.href = "/admindashboard";
-          } else {
-            localStorage.setItem("username", email);
-            //localStorage.setItem("username", dt.registration.name);
-            window.location.href = "/dashboard";
-          }
+
+    try {
+      const result = await axios.post(url, data);
+      const dt = result.data;
+
+      if (dt.statusCode === 200) {
+        if (email === "admin" && password === "admin") {
+          Cookies.set('username', email); // Set cookie
+          navigate("/admindashboard");
+        } else {
+          Cookies.set('username', email); // Set cookie
+          navigate("/dashboard");
         }
-        else
-        {
-          alert(dt.statusMessage);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      } else {
+        alert(dt.statusMessage);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again later.");
+    }
   };
 
   return (
@@ -84,9 +83,10 @@ export default function Login() {
                       type="email"
                       id="form1Example13"
                       className="form-control form-control-lg"
-                      onChange={(e)=> setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value)}
                       value={email}
                       placeholder="Enter Email"
+                      required
                     />
                   </div>
 
@@ -95,9 +95,10 @@ export default function Login() {
                       type="password"
                       id="form1Example23"
                       className="form-control form-control-lg"
-                      onChange={(e)=> setPassword(e.target.value)}
-                                value={password}
-                                placeholder="Enter Password"
+                      onChange={(e) => setPassword(e.target.value)}
+                      value={password}
+                      placeholder="Enter Password"
+                      required
                     />
                   </div>
 
@@ -110,7 +111,7 @@ export default function Login() {
                         id="form1Example3"
                         checked
                       />
-                      <label className="form-check-label" for="form1Example3">
+                      <label className="form-check-label" htmlFor="form1Example3">
                         {" "}
                         Remember me{" "}
                       </label>
@@ -120,30 +121,13 @@ export default function Login() {
                   <button
                     type="submit"
                     className="btn btn-primary btn-lg btn-block"
-                    onClick={(e)=> handleLogin(e)}
+                    onClick={(e) => handleLogin(e)}
                   >
                     Sign in
                   </button>
-                  <Link to="/Registration" className="btn btn-info btn-lg btn-block">                   
-                      Registration
+                  <Link to="/Registration" className="btn btn-info btn-lg btn-block">
+                    Registration
                   </Link>
-                  <a
-                    className="btn btn-primary btn-lg btn-block"
-                    style={{ backgroundColor: "#3b5998" }}
-                    href="#!"
-                    role="button"
-                  >
-                    <i className="fab fa-facebook-f me-2"></i>Continue with
-                    Facebook
-                  </a>
-                  <a
-                    className="btn btn-primary btn-lg btn-block"
-                    style={{ backgroundColor: "#55acee" }}
-                    href="#!"
-                    role="button"
-                  >
-                    <i className="fab fa-twitter me-2"></i>Continue with Twitter
-                  </a>
                 </form>
               </div>
             </div>
